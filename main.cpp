@@ -3,6 +3,7 @@
 using namespace std;
 
 void getdata(string n[10],char a[10][10][4],int dataInd,int endInd,int blockInd);
+void putData(string n[10],char a[10][10][4],int dataInd,int endInd,int blockInd);
 void loadRegister(string n[10],char a[10][10][4],char reg[4],int dataInd,int endInd,int blockInd);
 void storeRegister(string n[10],char a[10][10][4],char reg[4],int dataInd,int endInd,int blockInd);
 void run(string n[10],char a[10][10][4],int jobInd,int dataInd,int endInd);
@@ -47,7 +48,6 @@ void storeRegister(string n[10],char a[10][10][4],char reg[4],int addr,int dataI
 
 void getdata(string n[10], char a[10][10][4],int dataInd,int endInd,int blockInd)
 {
-    //while(dataInd < endInd)
     int t=dataInd+1,data_len,i=0,j=0,k=0;
     data_len = n[t].length();
     //cout<<"Data leng: "<<data_len;
@@ -69,36 +69,63 @@ void getdata(string n[10], char a[10][10][4],int dataInd,int endInd,int blockInd
     //cout<<"\nBlockind + 0 + 1:"<<a[blockInd][0][1];
 }
 
+void putData(string n[10], char a[10][10][4],int dataInd,int endInd,int blockInd)
+{
+    //while(dataInd < endInd)
+    int i=0,j;
+    blockInd = blockInd / 10;
+    cout<<"BlockInd :"<<blockInd;
+
+cout<<"\n";
+    while(i<10)
+    {
+        for(j=0;j<4;j++)
+            cout<<a[blockInd][i][j];
+    i++;
+    }
+
+    //cout<<"\nBlockind + 0 + 1:"<<a[blockInd][0][1];
+}
+
 void run(string n[10],char a[10][10][4],int jobInd,int dataInd,int endInd)
 {
-    int blockInd,addr;
+    int blockInd,reg_addr,instr_block = 0,addrs = 0;
     static char reg[4] = {'\0'};
-    int numInstr=10,itr=0;
+    int numInstr=20,itr=0;
     while(itr<numInstr)
     {
-        //cout<<itr<<" ";
-        if(a[0][itr][0] == 'G')
+        cout<<a[instr_block][addrs][0] <<" ";
+        if(a[instr_block][addrs][0] == 'G')
         {
-            blockInd = (a[0][itr][2] - '0') * 10 + (a[0][itr][3]- '0') ;
-            cout<<"|"<<blockInd<<"||";
+            blockInd = (a[instr_block][addrs][2] - '0') * 10 + (a[instr_block][addrs][3]- '0') ;
+            //cout<<"|"<<blockInd<<"||";
             getdata(n,a,dataInd,endInd,blockInd);
         }
-        //else if(a[0][itr][0] == 'P')
-
-        else if(a[0][itr][0] == 'L')
-            {
-                addr = (a[0][itr][2] - '0') * 10 + (a[0][itr][3]- '0') ;
-                cout<<itr<<"Itr " <<addr<<'/';
-                loadRegister(n,a,reg,addr,dataInd,endInd);
-                cout<<"Register content: "<<reg[0]<<reg[1]<<reg[2]<<reg[3]<<"\n";
-            }
-        else if(a[0][itr][0] == 'S')
+        else if(a[instr_block][addrs][0]  == 'P')
         {
-            addr = (a[0][itr][2] - '0') * 10 + (a[0][itr][3]- '0') ;
-            storeRegister(n,a,reg,addr,dataInd,endInd);
+            blockInd = (a[instr_block][addrs][2] - '0') * 10 + (a[instr_block][addrs][3]- '0') ;
+            //cout<<"|"<<blockInd<<"||";
+            putData(n,a,dataInd,endInd,blockInd);
+        }
+        else if(a[instr_block][addrs][0] == 'L')
+            {
+                reg_addr = (a[instr_block][addrs][2] - '0') * 10 + (a[instr_block][addrs][3]- '0') ;
+                loadRegister(n,a,reg,reg_addr,dataInd,endInd);
+                //cout<<"Register content: "<<reg[0]<<reg[1]<<reg[2]<<reg[3]<<"\n";
+            }
+        else if(a[instr_block][addrs][0] == 'S')
+        {
+            reg_addr = (a[instr_block][addrs][2] - '0') * 10 + (a[instr_block][addrs][3]- '0') ;
+            storeRegister(n,a,reg,reg_addr,dataInd,endInd);
         }
         else{cout<<"Nothing: "<<itr<<"Letter: "<< a[0][itr][0]<<"\n";}
         itr++;
+    addrs++;
+
+        if(itr % 10 == 0)
+        {instr_block++;addrs = 0;
+        //cout<<i<<"II"<<instrInd<<" IB "<<instr_block;
+        }
     }
 }
 
@@ -123,7 +150,7 @@ void machine(string n[10],int len)
         cout<<n[t]<<endl;
         t++;
     }
-    cout<<jobidInd<<" "<<DataInd<<" "<<EndInd<<endl;
+    //cout<<jobidInd<<" "<<DataInd<<" "<<EndInd<<endl;
     int k=0;
 
     stringstream strtoint(n[jobidInd].substr(8, 4));
@@ -177,41 +204,3 @@ $DTA
 AMA  PANANAL A CPLANN A A MA
 $END0102
 */
-
-/*
-0 4 6
-21
-Str: G D 3 0
-L R 3 6
-S R 4 0
-L R 3 5
-S R 4 1
-L R 3 4
-S R 4 2
-L R 3 3
-S R 4 3
-L R 3 2
-*/
-/*
-$AMJ010200210001
-GD30LR36SR40LR35SR41LR34SR42LR33SR43LR32
-SR44LR31SR45LR30SR46LR39SR47SR38SR49PD40
-H
-$DTA
-AMA  PANANAL A CPLANN A A MA
-$END0102
-
-0 4 6
-21
-Str: G D 3 0
-L R 3 6
-S R 4 0
-L R 3 5
-S R 4 1
-L R 3 4
-S R 4 2
-L R 3 3
-S R 4 3
-L R 3 2
-|30||
-Blockind + 0 + 1:M*/
