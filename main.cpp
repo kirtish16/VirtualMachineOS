@@ -28,7 +28,6 @@ int main()
 
         if (n[i][0] == '$' && n[i][1] == 'E')
         {
-            cout << "i=" << i << endl;
             len = i;
             machine(n, len + 1);
             i = -1;
@@ -97,7 +96,7 @@ void putData(string n[MAX], char a[10][10][4], int dataInd, int endInd, int bloc
 {
     int i = 0, j;
     blockInd = blockInd / 10;
-    cout << a[blockInd][i][0] << endl;
+
     while (i < 10)
     {
         for (j = 0; j < 4; j++)
@@ -116,7 +115,6 @@ void run(string n[MAX], char a[10][10][4], int jobInd, int dataInd, int endInd)
     {
         if (a[instr_block][addrs][0] == 'H')
         {
-            cout << "instr " << instr_block << " addr " << addrs;
             break;
         }
 
@@ -189,10 +187,7 @@ void machine(string n[MAX], int len)
     {
         if (n[instrInd][k] == 'H')
         {
-            cout << "\n++++++++++++++++++++++++++++++++++++\n";
             a[instr_block][addrs][0] = n[instrInd][k];
-            cout << instr_block << " " << addrs << endl;
-            cout << a[instr_block][addrs][0] << "<-" << n[instrInd][k] << endl;
             break;
         }
         for (int j = 0; j < 4; j++)
